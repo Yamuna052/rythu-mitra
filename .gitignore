@@ -1,0 +1,17 @@
+# Ignore datasets
+data/
+*.zip
+
+# Ignore ML models
+models/*.h5
+models/*.pkl
+
+# Node modules
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Env
+.env
