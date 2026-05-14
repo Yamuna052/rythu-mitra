@@ -21,7 +21,7 @@ function App() {
     formData.append("image", image);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/predict", {
+      const res = await fetch("https://rythu-mitra-backend.onrender.com", {
         method: "POST",
         body: formData,
       });
