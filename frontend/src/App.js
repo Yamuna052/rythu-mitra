@@ -21,10 +21,13 @@ function App() {
     formData.append("image", image);
 
     try {
-      const res = await fetch("https://rythu-mitra-backend.onrender.com/predict", {
+      console.log("Sending request...");
+
+      const res = await fetch( "https://rythu-mitra-backend.onrender.com/predict", {
         method: "POST",
         body: formData,
       });
+      console.log("Response received");
 
       const data = await res.json();
 
