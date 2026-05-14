@@ -17,19 +17,9 @@ app = Flask(__name__)
 CORS(app)
 
 # ==============================
-# 3. LOAD MODELS
+# 3. BASE DIRECTORY
 # ==============================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-soil_model = load_model(
-    os.path.join(BASE_DIR, "models/soil_model_fixed.h5"),
-    compile=False
-)
-
-crop_model = joblib.load(
-    os.path.join(BASE_DIR, "models/crop_model.pkl")
-)
-print("✅ Models loaded")
 
 # ==============================
 # 4. LABELS
@@ -63,6 +53,21 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
+
+        # --------------------------
+        # LOAD MODELS HERE
+        # --------------------------
+        soil_model = load_model(
+            os.path.join(BASE_DIR, "models/soil_model_fixed.h5"),
+            compile=False
+        )
+
+        crop_model = joblib.load(
+            os.path.join(BASE_DIR, "models/crop_model.pkl")
+        )
+
+        print("✅ Models loaded")
+
         # --------------------------
         # IMAGE PROCESSING
         # --------------------------
@@ -72,6 +77,7 @@ def predict():
             np.frombuffer(file.read(), np.uint8),
             cv2.IMREAD_COLOR
         )
+
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = cv2.resize(image, (150, 150))
         image = image / 255.0
@@ -87,23 +93,28 @@ def predict():
         # LOCATION (AUTO)
         # --------------------------
         try:
-            loc_res = requests.get("http://ip-api.com/json/", timeout=2)
+            loc_res = requests.get(
+                "http://ip-api.com/json/",
+                timeout=2
+            )
+
             loc_data = loc_res.json()
 
             lat = loc_data['lat']
             lon = loc_data['lon']
 
         except:
-            # fallback (India default)
-            lat, lon = 28.7041 , 77.1025
+            # India default fallback
+            lat, lon = 28.7041, 77.1025
 
         # --------------------------
         # WEATHER
         # --------------------------
-        API_KEY = "a3ddda72a1824497fdbdbd6ed51932e5"  # 🔴 replace
+        API_KEY = "YOUR_OPENWEATHER_API_KEY"
 
         try:
             url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
+
             res = requests.get(url, timeout=3)
             data = res.json()
 
@@ -169,9 +180,11 @@ def predict():
         # CROP PREDICTION
         # --------------------------
         probs = crop_model.predict_proba(input_data)[0]
+
         top3 = probs.argsort()[-3:][::-1]
 
         results = []
+
         for i in top3:
             results.append({
                 "crop": crop_labels[i],
@@ -189,12 +202,20 @@ def predict():
         })
 
     except Exception as e:
-        return jsonify({"error": str(e)})
+        return jsonify({
+            "error": str(e)
+        })
 
 # ==============================
 # 7. RUN SERVER
 # ==============================
-if __name__ == '__main__':
+if __name__ == "__main__":
+
     port = int(os.environ.get("PORT", 10000))
-    print("✅ Flask starting...")
-    app.run(host='0.0.0.0', port=port)
+
+    print(f"✅ Starting Flask on port {port}")
+
+    app.run(
+        host="0.0.0.0",
+        port=port
+    )
