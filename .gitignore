@@ -1,17 +1,21 @@
-# Ignore datasets
-data/
-*.zip
-
-# Ignore ML models
-models/*.h5
-models/*.pkl
-
-# Node modules
-node_modules/
-
-# Python cache
+# Python
+backend/venv/
 __pycache__/
 *.pyc
 
-# Env
+# Node
+frontend/node_modules/
+
+# Build folders
+dist/
+build/
+
+# Environment files
 .env
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -3,11 +3,11 @@
 # ==============================
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
 import requests
 import joblib
-from tensorflow.keras.models import load_model
 import os
 
 # ==============================
@@ -21,9 +21,14 @@ CORS(app)
 # ==============================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-soil_model = load_model(os.path.join(BASE_DIR, "../models/soil_model_5class.h5"))
-crop_model = joblib.load(os.path.join(BASE_DIR, "../models/crop_model.pkl"))
+soil_model = load_model(
+    os.path.join(BASE_DIR, "models/soil_model_fixed.h5"),
+    compile=False
+)
 
+crop_model = joblib.load(
+    os.path.join(BASE_DIR, "models/crop_model.pkl")
+)
 print("✅ Models loaded")
 
 # ==============================
