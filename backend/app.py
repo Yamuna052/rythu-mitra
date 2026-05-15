@@ -14,7 +14,7 @@ import os
 # 2. INIT APP
 # ==============================
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # ==============================
 # 3. BASE DIRECTORY
@@ -110,7 +110,7 @@ def predict():
         # --------------------------
         # WEATHER
         # --------------------------
-        API_KEY = "YOUR_OPENWEATHER_API_KEY"
+        API_KEY = "a3ddda72a1824497fdbdbd6ed51932e5"
 
         try:
             url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
